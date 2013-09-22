@@ -7,3 +7,4 @@ echo "set -o vi" >> ~/.bashrc
 source ~/.bashrc
 sudo apt-get update
 sudo apt-get install git vim
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
