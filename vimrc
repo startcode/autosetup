@@ -115,8 +115,3 @@ au FileType c,cc,cpp call GnuIndent()
 set makeprg=./waf
 " map control-backspace to delete the previous word
 :imap <C-BS> <C-W>
-
-"enable hex mode
-nnoremap <C-H> :Hexmode<CR>
-inoremap <C-H> <Esc>:Hexmode<CR>
-vnoremap <C-H> :<C-U>Hexmode<CR>
