@@ -3,6 +3,7 @@ echo "alias update='sudo apt-get update && sudo apt-get upgrade -y && sudo apt-g
 echo "alias pull='git pull origin master'" >>~/.bashrc
 echo "alias push='git push origin master'" >>~/.bashrc
 echo "alias die='sudo shutdown -P 0'" >> ~/.bashrc
+echo "alias go='xdg-open'" >> ~/.bashrc
 echo "set -o vi" >> ~/.bashrc
 source ~/.bashrc
 sudo apt-get update
