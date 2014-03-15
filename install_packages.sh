@@ -20,6 +20,7 @@ automake
 build-essentials
 git
 vim
+espeak
 )
 
 for p in ${packages[*]}; do
