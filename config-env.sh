@@ -11,3 +11,5 @@ sudo apt-get update
 sudo apt-get install git vim
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 cp vimrc ~/.vimrc
+vim -c "BundleClean" -c "q" -c "q"
+~/vim/bundle/YouCompleteMe/install --clang-completer

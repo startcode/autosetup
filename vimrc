@@ -5,29 +5,25 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
+Bundle 'Valloric/YouCompleteMe'
 Bundle 'a.vim'
 Bundle 'tComment'
 Bundle 'surround.vim'
-Bundle 'LaTeX-error-filter'
 Bundle 'DrawIt'
 Bundle 'marklar.vim'
 Bundle 'SpellChecker'
 Bundle 'repeat.vim'
 Bundle 'delimitMate.vim'
 Bundle 'matchit.zip'
-Bundle 'quickfonts.vim'
-Bundle 'SuperTab'
 Bundle 'ctags.vim'
-Bundle 'Screen-vim---gnu-screentmux'
 Bundle 'snipMate'
 Bundle 'spell.vim'
 Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
 Bundle 'scrooloose/nerdtree'
-Bundle 'DoxygenToolkit.vim'
-Bundle 'AutoComplPop'
+"Bundle 'SuperTab'
+"Bundle 'AutoComplPop'
 Bundle 'cpp.vim'
-Bundle 'STL-improved'
-Bundle 'desert-warm-256'
+Bundle 'unimpaired.vim'
 
 filetype plugin indent on
 set shellslash
@@ -96,11 +92,6 @@ endif
 "call nerdtree using F3
 nnoremap <F3> :NERDTreeToggle<CR>
 
-"paste mode switch using F2
-nnoremap <F2> :set invpaste paste?<CR>
-set pastetoggle=<F2>
-set showmode
-set winaltkeys=no
 
 
 "gnu format indentation
@@ -112,6 +103,13 @@ function! GnuIndent()
 endfunction
 au FileType c,cc,cpp call GnuIndent() 
 
-set makeprg=./waf
 " map control-backspace to delete the previous word
 :imap <C-BS> <C-W>
+
+set winaltkeys=no
+:noremap gm :call cursor(0, len(getline('.'))/2)<CR>
+
+"paste mode switch using F2
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
