@@ -60,3 +60,4 @@ colorschem solarized
 "highlight Pmenu ctermbg=238 gui=bold 
 syntax on
 set background=dark
+set hlsearch
