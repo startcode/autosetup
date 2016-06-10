@@ -18,6 +18,7 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'surround.vim'
+Plugin 'ntpeters/vim-better-whitespace'
 "==================
 call vundle#end()            " required
 filetype plugin indent on     " required! 
