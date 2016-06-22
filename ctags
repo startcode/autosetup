@@ -1,0 +1,6 @@
+--recurse=yes
+--exclude=vendor/*
+--exclude=db/*
+--exclude=log/*
+--exclude=.git
+--exclude=.svn

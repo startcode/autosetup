@@ -21,6 +21,7 @@ build-essentials
 git
 vim
 espeak
+exuberant-ctags
 )
 
 for p in ${packages[*]}; do
