@@ -6,11 +6,11 @@ if (( EUID != 0 )); then
 fi
 
 apt-get update
-apt-get upgrade -y 
+apt-get upgrade -y
 sudo apt-get dist-upgrade -y
 
 packages=(
-screen
+tmux
 openssh-server
 openssh-client
 xclip
