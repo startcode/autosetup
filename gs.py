@@ -2,7 +2,8 @@
 import sys
 import argparse
 
-BASIC_TYPES=["double", "int", "bool", "float", "size_t", "uint32_t", "uint32_t", "uint64_t", "unsigned int"]
+BASIC_TYPES=["double", "int", "bool", "float", "size_t", "uint32_t", "uint32_t", "uint64_t", \
+"unsigned int", "char"]
 
 def is_copy_type(v_type):
     if v_type in BASIC_TYPES:
@@ -11,8 +12,11 @@ def is_copy_type(v_type):
 
 def gen_getter(v_type, v_name):
     if not is_copy_type(v_type):
-        v_type = "const %s&" % v_type;
-    return \
+        const_getter = "const %s& %s() const { return _%s; }\n"% (v_type, v_name, v_name)
+        mutable_getter = "%s& %s() { return _%s; }" % (v_type, v_name, v_name)
+        return const_getter + mutable_getter;
+    else:
+        return \
 """%s %s() const { return _%s; }""" % (v_type, v_name, v_name)
 
 def gen_setter(v_type, v_name):
@@ -21,9 +25,8 @@ def gen_setter(v_type, v_name):
     return \
 """void set_%s(%s %s) { _%s = %s; }""" % (v_name, v_type, v_name, v_name, v_name)
 
-def read_input(filename):
-    f = file(filename, 'r')
-    for line in f.readlines():
+def read_input(f):
+    for line in f.read().split("\n"):
         line = ' '.join(line.strip().split(' '))
         line = line.split()
         if len(line) <= 1:
@@ -41,7 +44,13 @@ def read_input(filename):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="get c++ getter and setter", prog="gs.py")
-    parser.add_argument("files", action="store", type=str, nargs="+" , help="specify the definition file")
+    parser.add_argument("-f", "--files", action="store", type=str, nargs="+" , help="specify the definition file")
     args = parser.parse_args()
-    for f in args.files:
-        read_input(f)
+    if args.files:
+        for filename in args.files:
+            f = file(filename, 'r')
+            read_input(f)
+            f.close()
+    else:
+        while True:
+            read_input(sys.stdin)
