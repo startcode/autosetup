@@ -19,6 +19,8 @@ autoconf
 automake
 build-essentials
 git
+pip
+ack-grep
 vim
 espeak
 exuberant-ctags

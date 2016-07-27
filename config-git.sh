@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-echo "your email:";
+echo -n "your email:";
 read $email
-echo "your name:";
+echo -n "your name:";
 read $name
 git config --global user.email "$email"
 git config --global user.name "$name"
