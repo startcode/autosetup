@@ -24,6 +24,7 @@ ack-grep
 vim
 espeak
 exuberant-ctags
+ipython
 )
 
 for p in ${packages[*]}; do
