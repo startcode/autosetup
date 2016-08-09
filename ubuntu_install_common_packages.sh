@@ -17,7 +17,7 @@ xclip
 apt-file
 autoconf
 automake
-build-essentials
+g++
 git
 pip
 ack-grep
