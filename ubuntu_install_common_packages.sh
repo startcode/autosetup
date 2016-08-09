@@ -25,6 +25,7 @@ vim
 espeak
 exuberant-ctags
 ipython
+subversion
 )
 
 for p in ${packages[*]}; do
