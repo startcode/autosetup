@@ -125,7 +125,7 @@ set showmode
 "configure the colors
 " let g:solarized_termcolors=256
 " colorschem solarized
-colorscheme gruvbox
+"colorscheme gruvbox
 "highlight Pmenu ctermbg=238 gui=bold
 syntax on
 "set background=dark

@@ -26,6 +26,7 @@ espeak
 exuberant-ctags
 ipython
 subversion
+vim
 )
 
 for p in ${packages[*]}; do
@@ -36,3 +37,9 @@ done
 apt-get -f install
 apt-get autoremove -y
 apt-get clean -y
+
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+cp vimrc ~/.vimrc
+vim +PluginInstall +qall
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
