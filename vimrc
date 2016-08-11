@@ -140,3 +140,4 @@ set colorcolumn=100
 
 hi Normal ctermbg=none
 highlight NonText ctermbg=none
+set autowrite
