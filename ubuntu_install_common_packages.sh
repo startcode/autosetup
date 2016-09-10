@@ -10,23 +10,26 @@ apt-get upgrade -y
 sudo apt-get dist-upgrade -y
 
 packages=(
-tmux
-openssh-server
-openssh-client
-xclip
+ack-grep
 apt-file
+aptitude
 autoconf
 automake
-g++
-git
-pip
-ack-grep
-vim
 espeak
 exuberant-ctags
+g++
+git
+git-sh
 ipython
+libevent-dev
+libncurses5-dev
+openssh-client
+openssh-server
+python-pip
 subversion
+tmux
 vim
+xclip
 )
 
 for p in ${packages[*]}; do
