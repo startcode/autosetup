@@ -20,6 +20,7 @@ exuberant-ctags
 g++
 git
 git-sh
+htop
 ipython
 libevent-dev
 libncurses5-dev
