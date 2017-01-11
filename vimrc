@@ -1,6 +1,8 @@
 " #####################################
 " Get vundle before using this configuration
 " git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" after install,
+" ~/.vim/bundle/YouCompleteMe/install.sh --clang-completer
 "########################################
 set nocompatible               " be iMproved
 filetype off                   " required!
@@ -12,12 +14,9 @@ Plugin 'gmarik/Vundle.vim'
 "==================
 Plugin 'a.vim'
 Plugin 'tcomment'
-Plugin 'AutoComplPop'
-Plugin 'tpope/vim-fugitive'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'flazz/vim-colorschemes'
-Plugin 'octol/vim-cpp-enhanced-highlight'
-Plugin 'craigemery/vim-autotag'
+"Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'surround.vim'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'vim-airline/vim-airline'
@@ -26,28 +25,84 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tacahiroy/ctrlp-funky'
 Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'morhetz/gruvbox'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 "==================
 call vundle#end()            " required
 filetype plugin indent on     " required! 
 
-let OmniCpp_NamespaceSearch = 2
-let OmniCpp_GlobalScopeSearch = 1
-let OmniCpp_ShowPrototypeInAbbr = 1 " show function parameters
-let OmniCpp_MayCompleteDot = 1 " autocomplete after .
-let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
-let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
-let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+"autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+"set completeopt=menuone,menu,longest,preview
 
-autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-set completeopt=menuone,menu,longest,preview
-"super tab
-let g:SuperTabDefaultCompletionType = "context"
 
-let g:acp_ignorecaseOption = 0
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+set completeopt=longest,menu "vimtip 1228
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif "close window after insert
+ "inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+ "inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
+ "inoremap <expr> <Up> pumvisible() ? "\<C-k>" : "\<Up>"
+ "inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>":"\<PageDown>"
+ "inoremap <expr> <PageUp> pumvisible() ? "\<PageUp>\<C-p>\<C-n>":"\<PageUp>"
 
-"settings for delimitMate
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <F6> :YcmForceCompileAndDiagnostics<CR>	"force recomile with syntastic
+" nnoremap <leader>lo :lopen<CR>	"open locationlist
+" nnoremap <leader>lc :lclose<CR>	"close locationlist
+inoremap <leader><leader> <C-x><C-o>
+let g:ycm_confirm_extra_conf=0
+let g:ycm_collect_identifiers_from_tags_files=1
+let g:ycm_collect_identifiers_from_comments_and_strings = 0
+let g:ycm_min_num_of_chars_for_completion=2
+let g:ycm_cache_omnifunc=0
+let g:ycm_seed_identifiers_with_syntax=1	
+let g:ycm_complete_in_comments = 1
+let g:ycm_complete_in_strings = 1
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar' : 1,
+      \ 'nerdtree' : 1,
+      \}
+"youcompleteme  默认tab  s-tab 和 ultisnips 冲突
+let g:ycm_key_list_select_completion = ['<c-n>', '<c-f>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<c-b>', '<c-p>', '<c-k>', '<Up>']
+"let g:ycm_key_invoke_completion = '<M-;>'
+
+let g:UltiSnipsUsePythonVersion=2
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsListSnippets="<c-e>"
+let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
+let g:UltiSnipsEditSplit="context"
+let g:UltiSnipsSnippetsDir="~/src/autosetup/ultisnips"
+function! g:UltiSnips_Complete()
+    call UltiSnips#ExpandSnippet()
+    if g:ulti_expand_res == 0
+        if pumvisible()
+            return "\<C-n>"
+        else
+            call UltiSnips#JumpForwards()
+            if g:ulti_jump_forwards_res == 0
+               return "\<TAB>"
+            endif
+        endif
+    endif
+    return ""
+endfunction
+
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+
+" Expand snippet or return
+let g:ulti_expand_res = 1
+function! Ulti_ExpandOrEnter()
+    call UltiSnips#ExpandSnippet()
+    if g:ulti_expand_res
+        return ''
+    else
+        return "\<return>"
+endfunction
+
+" Set <space> as primary trigger
+inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
 
 set background=dark    " Setting dark mode
 
@@ -64,8 +119,8 @@ nmap <leader>bl :ls<CR>
 
 " Setup some default ignores
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](\.(git|hg|svn)|\_site|build|devel)$',
-  \ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg)$',
+  \ 'dir':  '\v[\/](\.(git|hg|svn)|\_site|devel|build)$',
+  \ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg|make|dir|o|cmake)$',
 \}
 
 " Use the nearest .git directory as the cwd
@@ -86,25 +141,19 @@ let g:buffergator_viewport_split_policy = 'R'
 
 " I want my own keymappings...
 let g:buffergator_suppress_keymaps = 1
-
 " Looper buffers
 let g:buffergator_mru_cycle_loop = 1
-
 nnoremap <Leader>fu :CtrlPFunky<Cr>
 " narrow the list down with a word under cursor
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 let g:ctrlp_funky_syntax_highlight = 1
 let g:ctrlp_extensions = ['funky']
-
 " Go to the previous buffer open
 nmap <leader>jj :BuffergatorMruCyclePrev<cr>
-
 " Go to the next buffer open
 nmap <leader>kk :BuffergatorMruCycleNext<cr>
-
 " View the entire list of buffers open
 nmap <leader>bl :BuffergatorOpen<cr>
-
 " Shared bindings from Solution #1 from earlier
 nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
@@ -125,10 +174,12 @@ set showmode
 "configure the colors
 " let g:solarized_termcolors=256
 " colorschem solarized
-"colorscheme gruvbox
+" colorscheme gruvbox
+" colorscheme clarity
 "highlight Pmenu ctermbg=238 gui=bold
+" colorscheme dark-ruby
 syntax on
-"set background=dark
+set background=dark
 set hlsearch
 
 " Uncomment the following to have Vim jump to the last position when reopening a file
@@ -136,8 +187,17 @@ if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
     \| exe "normal! g'\"" | endif
 endif
-set colorcolumn=100
+"set colorcolumn=100
 
 hi Normal ctermbg=none
 highlight NonText ctermbg=none
+set nu
+set spell spelllang=en_us
+setlocal spell spelllang=en_us
 set autowrite
+"set nowrap
+set exrc
+set secure
+set backspace=indent,eol,start
+set ruler
+

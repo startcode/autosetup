@@ -31,6 +31,7 @@ subversion
 tmux
 vim
 xclip
+imagemagick
 )
 
 for p in ${packages[*]}; do
