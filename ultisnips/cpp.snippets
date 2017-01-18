@@ -24,7 +24,7 @@ private:
 };
 endsnippet
 
-snippet ns "namespace .. (namespace)"
+snippet ns "namespace .. (namespace)" b
 namespace${1/.+/ /m}${1:`!p snip.rv = snip.basename or "name"`}
 {
 	${VISUAL}$0
@@ -70,16 +70,16 @@ public:
 
 #endif /* $2 */
 endsnippet
-# vim:ft=snippets:
 
-snippet gtestf "gtest test testsuite" b
-class ${1} : public ::testing::Test {
+snippet gtestf "gtest test testsuite"
+class : public ::testing::Test {
 public:
 	virtual void SetUp() {
-		${2}
 	}
 	virtual void TearDown() {
 	}
-	virtual ~${1} {}
+	virtual ~{}
 };
 endsnippet
+
+# vim:ft=snippets:

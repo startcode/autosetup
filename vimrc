@@ -16,7 +16,6 @@ Plugin 'a.vim'
 Plugin 'tcomment'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'altercation/vim-colors-solarized'
-"Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'surround.vim'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'vim-airline/vim-airline'
@@ -27,27 +26,29 @@ Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'morhetz/gruvbox'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'ervandew/supertab'
 "==================
 call vundle#end()            " required
 filetype plugin indent on     " required! 
 
-"autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-"set completeopt=menuone,menu,longest,preview
+let mapleader=","
 
-
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:SuperTabDefaultCompletionType="\<C-Tab>"
 set completeopt=longest,menu "vimtip 1228
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif "close window after insert
- "inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
- "inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
- "inoremap <expr> <Up> pumvisible() ? "\<C-k>" : "\<Up>"
- "inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>":"\<PageDown>"
- "inoremap <expr> <PageUp> pumvisible() ? "\<PageUp>\<C-p>\<C-n>":"\<PageUp>"
+autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+"inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
+"inoremap <expr> <Up> pumvisible() ? "\<C-k>" : "\<Up>"
+"inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>":"\<PageDown>"
+"inoremap <expr> <PageUp> pumvisible() ? "\<PageUp>\<C-p>\<C-n>":"\<PageUp>"
+
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <F6> :YcmForceCompileAndDiagnostics<CR>	"force recomile with syntastic
-" nnoremap <leader>lo :lopen<CR>	"open locationlist
-" nnoremap <leader>lc :lclose<CR>	"close locationlist
+nnoremap <leader>lo :lopen<CR>	"open locationlist
+nnoremap <leader>lc :lclose<CR>	"close locationlist
 inoremap <leader><leader> <C-x><C-o>
 let g:ycm_confirm_extra_conf=0
 let g:ycm_collect_identifiers_from_tags_files=1
@@ -62,18 +63,18 @@ let g:ycm_filetype_blacklist = {
       \ 'nerdtree' : 1,
       \}
 "youcompleteme  默认tab  s-tab 和 ultisnips 冲突
-let g:ycm_key_list_select_completion = ['<c-n>', '<c-f>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<c-b>', '<c-p>', '<c-k>', '<Up>']
-"let g:ycm_key_invoke_completion = '<M-;>'
+let g:ycm_key_list_select_completion = ['<C-n>', '<C-f>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-b>', '<C-p>', '<C-k>', '<Up>']
+let g:ycm_key_invoke_completion = '<M-;>'
 
 let g:UltiSnipsUsePythonVersion=2
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsExpandTrigger="<Tab>"
+let g:UltiSnipsJumpForwardTrigger="<Tab>"
+let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
 let g:UltiSnipsListSnippets="<c-e>"
-let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 let g:UltiSnipsEditSplit="context"
 let g:UltiSnipsSnippetsDir="~/src/autosetup/ultisnips"
+nmap <leader>e : UltiSnipsEdit<CR>
 function! g:UltiSnips_Complete()
     call UltiSnips#ExpandSnippet()
     if g:ulti_expand_res == 0
@@ -200,4 +201,3 @@ set exrc
 set secure
 set backspace=indent,eol,start
 set ruler
-
