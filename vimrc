@@ -14,7 +14,6 @@ Plugin 'gmarik/Vundle.vim'
 "==================
 Plugin 'a.vim'
 Plugin 'tcomment'
-Plugin 'Valloric/YouCompleteMe'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'surround.vim'
 Plugin 'ntpeters/vim-better-whitespace'
@@ -24,16 +23,16 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tacahiroy/ctrlp-funky'
 Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'morhetz/gruvbox'
+Plugin 'ervandew/supertab'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-Plugin 'ervandew/supertab'
 "==================
 call vundle#end()            " required
 filetype plugin indent on     " required! 
 
 let mapleader=","
 
-let g:SuperTabDefaultCompletionType="\<C-Tab>"
 set completeopt=longest,menu "vimtip 1228
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif "close window after insert
 autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
@@ -65,15 +64,9 @@ let g:ycm_filetype_blacklist = {
 "youcompleteme  默认tab  s-tab 和 ultisnips 冲突
 let g:ycm_key_list_select_completion = ['<C-n>', '<C-f>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-b>', '<C-p>', '<C-k>', '<Up>']
-let g:ycm_key_invoke_completion = '<M-;>'
+let g:SuperTabDefaultCompletionType = '<c-n>'
+map <leader>f :YcmCompleter FixIt<CR>
 
-let g:UltiSnipsUsePythonVersion=2
-let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger="<Tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-let g:UltiSnipsListSnippets="<c-e>"
-let g:UltiSnipsEditSplit="context"
-let g:UltiSnipsSnippetsDir="~/src/autosetup/ultisnips"
 nmap <leader>e : UltiSnipsEdit<CR>
 function! g:UltiSnips_Complete()
     call UltiSnips#ExpandSnippet()
@@ -89,8 +82,15 @@ function! g:UltiSnips_Complete()
     endif
     return ""
 endfunction
-
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+let g:UltiSnipsUsePythonVersion=2
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+let g:UltiSnipsListSnippets="<c-e>"
+let g:UltiSnipsEditSplit="context"
+let g:UltiSnipsSnippetsDir="/home/lidong05/src/autosetup/ultisnips"
+let g:UltiSnipsSnippetDirectories=["/home/lidong05/src/autosetup/ultisnips"]
 
 " Expand snippet or return
 let g:ulti_expand_res = 1

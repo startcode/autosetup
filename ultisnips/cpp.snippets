@@ -33,8 +33,7 @@ endsnippet
 
 snippet readfile "read file (readF)"
 std::vector<char> v;
-if (FILE *fp = fopen(${1:"filename"}, "r"))
-{
+if (FILE *fp = fopen(${1:"filename"}, "r")) {
 	char buf[1024];
 	while(size_t len = fread(buf, 1, sizeof(buf), fp))
 		v.insert(v.end(), buf, buf + len);
@@ -46,6 +45,18 @@ snippet map "std::map (map)"
 std::map<${1:key}, ${2:value}> map$0;
 endsnippet
 
+snippet endl "std::endl"
+std::endl;$0
+endsnippet
+
+snippet cstr "const std::string&"
+const std::string&$0
+endsnippet
+
+snippet sstr "std::string"
+std::string $0
+endsnippet
+
 snippet vector "std::vector (v)"
 std::vector<${1:char}> v$0;
 endsnippet
@@ -54,32 +65,61 @@ snippet tp "template <typename ..> (template)"
 template <typename ${1:_InputIter}>
 endsnippet
 
+snippet end_with "check string end with"
+bool ends_with(const std::string& original, const std::string& pattern) {
+	return original.length() >= pattern.length() &&
+			original.substr(original.length() - pattern.length()) == pattern;
+}
+$0
+endsnippet
+
+snippet start_with "check string start with"
+bool starts_with(const std::string& original, const std::string& pattern) {
+	return original.length() >= pattern.length() &&
+			original.substr(0, pattern.length()) == pattern;
+}
+$0
+endsnippet
+
 snippet cla "An entire .h generator" b
 #ifndef ${2:`!v substitute(vim_snippets#Filename('$1_H','ClassName'),'.*','\U&\E','')`}
 #define $2
 
-class ${1:`!v substitute(substitute(vim_snippets#Filename('$1','ClassName'),'^.','\u&',''), '_\(\w\)', '\u\1', 'g')`}
-{
-private:
-	$3
-
+class ${1:`!v substitute(substitute(vim_snippets#Filename('$1','ClassName'),'^.','\u&',''), '_\(\w\)', '\u\1', 'g')`} {
 public:
 	$1();
 	virtual ~$1();
+
+private:
+	$3
 };
 
 #endif /* $2 */
 endsnippet
 
 snippet gtestf "gtest test testsuite"
-class : public ::testing::Test {
+#include "gflags/gflags.h"
+#define private public
+
+class $1 : public ::testing::Test {
 public:
 	virtual void SetUp() {
 	}
 	virtual void TearDown() {
 	}
-	virtual ~{}
+	virtual ~$1() {
+	}
 };
+
+TEST_F($1, ${2:case1}) {
+}
+
+int main(int argc, char* argv[]) {
+	::testing::InitGoogleTest(&argc, argv);
+	::google::ParseCommandLineFlags(&argc, &argv, true);
+	return RUN_ALL_TESTS();
+}
+
 endsnippet
 
 # vim:ft=snippets:
