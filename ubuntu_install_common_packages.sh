@@ -29,7 +29,6 @@ openssh-server
 python-pip
 subversion
 tmux
-vim
 xclip
 imagemagick
 )
@@ -43,8 +42,9 @@ apt-get -f install
 apt-get autoremove -y
 apt-get clean -y
 
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
-cp vimrc ~/.vimrc
-vim +PluginInstall +qall
 
+# for vim configurations
+bash ./compile_vim.sh
+
+# for tmux configurations
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
