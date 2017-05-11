@@ -26,9 +26,33 @@ Plugin 'morhetz/gruvbox'
 Plugin 'ervandew/supertab'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
+Plugin 'bogado/file-line'
 Plugin 'honza/vim-snippets'
+Plugin 'google/vim-maktaba'
+Plugin 'google/vim-codefmt'
+Plugin 'google/vim-glaive'
+Plugin 'rhysd/vim-clang-format'
 "==================
 call vundle#end()            " required
+
+call glaive#Install()
+"google style auto format"
+Glaive codefmt plugin[mappings]
+Glaive codefmt google_java_executable="java -jar /path/to/google-java-format-VERSION-all-deps.jar"
+map <C-I> :pyf path_to_clang_format/clang-format.py<CR>
+imap <C-I> <ESC>:pyf path_to_clang_format/clang-format.py<CR>i
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType cc,c,cpp,proto,javascript AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+augroup END
+
 filetype plugin indent on     " required! 
 
 let mapleader=","
@@ -162,7 +186,7 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-set tabstop=4 softtabstop=4 shiftwidth=4 tw=100 expandtab
+set tabstop=2 softtabstop=2 shiftwidth=2 tw=2 expandtab
 
 set autoindent
 set smartindent

@@ -11,6 +11,7 @@ sudo apt-get dist-upgrade -y
 
 packages=(
 ack-grep
+clang-format-3.8
 apt-file
 aptitude
 autoconf

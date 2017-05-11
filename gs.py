@@ -28,6 +28,8 @@ def gen_setter(v_type, v_name):
 def read_input(f):
     for line in f.read().split("\n"):
         line = ' '.join(line.strip().split(' '))
+        if '=' in line:
+            line = line[:line.find('=')]
         line = line.split()
         if len(line) <= 1:
             continue
