@@ -32,6 +32,7 @@ Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmt'
 Plugin 'google/vim-glaive'
 Plugin 'rhysd/vim-clang-format'
+Plugin 'tpope/vim-fugitive'
 "==================
 call vundle#end()            " required
 
@@ -43,14 +44,14 @@ map <C-I> :pyf path_to_clang_format/clang-format.py<CR>
 imap <C-I> <ESC>:pyf path_to_clang_format/clang-format.py<CR>i
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType cc,c,cpp,proto,javascript AutoFormatBuffer clang-format
+  autocmd FileType cc,c,cpp,javascript AutoFormatBuffer clang-format
   autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
   autocmd FileType gn AutoFormatBuffer gn
   autocmd FileType html,css,json AutoFormatBuffer js-beautify
   autocmd FileType java AutoFormatBuffer google-java-format
-  autocmd FileType python AutoFormatBuffer yapf
-  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  " autocmd FileType python AutoFormatBuffer yapf
+  autocmd FileType python AutoFormatBuffer autopep8
 augroup END
 
 filetype plugin indent on     " required! 
@@ -186,7 +187,7 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-set tabstop=2 softtabstop=2 shiftwidth=2 tw=2 expandtab
+set expandtab
 
 set autoindent
 set smartindent
