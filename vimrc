@@ -191,6 +191,8 @@ set expandtab
 
 set autoindent
 set smartindent
+set cindent
+set cinoptions=>2
 
 "paste mode switch using F2
 nnoremap <F2> :set invpaste paste?<CR>

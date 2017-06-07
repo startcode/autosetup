@@ -23,6 +23,7 @@ make distclean
 make
 sudo make install
 
+cd ../..
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 cp vimrc ~/.vimrc
 vim +PluginInstall +qall
