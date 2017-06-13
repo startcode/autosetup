@@ -25,7 +25,9 @@ Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'morhetz/gruvbox'
 Plugin 'ervandew/supertab'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'SirVer/ultisnips'
 Plugin 'bogado/file-line'
+Plugin 'honza/vim-snippets'
 Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmt'
 Plugin 'google/vim-glaive'
@@ -35,15 +37,38 @@ Plugin 'tpope/vim-fugitive'
 call vundle#end()            " required
 
 call glaive#Install()
+"google style auto format"
+Glaive codefmt plugin[mappings]
+Glaive codefmt google_java_executable="java -jar /path/to/google-java-format-VERSION-all-deps.jar"
+map <C-I> :pyf path_to_clang_format/clang-format.py<CR>
+imap <C-I> <ESC>:pyf path_to_clang_format/clang-format.py<CR>i
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType cc,c,cpp,javascript AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  " autocmd FileType python AutoFormatBuffer yapf
+  autocmd FileType python AutoFormatBuffer autopep8
+augroup END
+
 filetype plugin indent on     " required! 
 
 let mapleader=","
 
-
 set completeopt=longest,menu "vimtip 1228
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif "close window after insert
 autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-let g:ycm_global_ycm_extra_conf='/home/lidong05/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+"inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
+"inoremap <expr> <Up> pumvisible() ? "\<C-k>" : "\<Up>"
+"inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>":"\<PageDown>"
+"inoremap <expr> <PageUp> pumvisible() ? "\<PageUp>\<C-p>\<C-n>":"\<PageUp>"
+
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <F6> :YcmForceCompileAndDiagnostics<CR>	"force recomile with syntastic
 nnoremap <leader>lo :lopen<CR>	"open locationlist
@@ -67,22 +92,43 @@ let g:ycm_key_list_previous_completion = ['<C-b>', '<C-p>', '<C-k>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<c-n>'
 map <leader>f :YcmCompleter FixIt<CR>
 
-"google style auto format"
-Glaive codefmt plugin[mappings]
-Glaive codefmt google_java_executable="java -jar /path/to/google-java-format-VERSION-all-deps.jar"
-map <C-I> :pyf path_to_clang_format/clang-format.py<CR>
-imap <C-I> <ESC>:pyf path_to_clang_format/clang-format.py<CR>i
-augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType cc,c,cpp,javascript AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
-  " autocmd FileType python AutoFormatBuffer yapf
-  autocmd FileType python AutoFormatBuffer autopep8
-augroup END
+nmap <leader>e : UltiSnipsEdit<CR>
+function! g:UltiSnips_Complete()
+    call UltiSnips#ExpandSnippet()
+    if g:ulti_expand_res == 0
+        if pumvisible()
+            return "\<C-n>"
+        else
+            call UltiSnips#JumpForwards()
+            if g:ulti_jump_forwards_res == 0
+               return "\<TAB>"
+            endif
+        endif
+    endif
+    return ""
+endfunction
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+let g:UltiSnipsUsePythonVersion=2
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+let g:UltiSnipsListSnippets="<c-e>"
+let g:UltiSnipsEditSplit="context"
+let g:UltiSnipsSnippetsDir="/home/lidong05/src/autosetup/ultisnips"
+let g:UltiSnipsSnippetDirectories=["/home/lidong05/src/autosetup/ultisnips"]
+
+" Expand snippet or return
+let g:ulti_expand_res = 1
+function! Ulti_ExpandOrEnter()
+    call UltiSnips#ExpandSnippet()
+    if g:ulti_expand_res
+        return ''
+    else
+        return "\<return>"
+endfunction
+
+" Set <space> as primary trigger
+inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
 
 set background=dark    " Setting dark mode
 
@@ -141,7 +187,6 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-set tabstop=2
 set expandtab
 
 set autoindent
@@ -183,4 +228,3 @@ set exrc
 set secure
 set backspace=indent,eol,start
 set ruler
-filetype plugin on
