@@ -25,7 +25,6 @@ Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'morhetz/gruvbox'
 Plugin 'ervandew/supertab'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'SirVer/ultisnips'
 Plugin 'bogado/file-line'
 Plugin 'honza/vim-snippets'
 Plugin 'google/vim-maktaba'
@@ -86,49 +85,7 @@ let g:ycm_filetype_blacklist = {
       \ 'tagbar' : 1,
       \ 'nerdtree' : 1,
       \}
-"youcompleteme  默认tab  s-tab 和 ultisnips 冲突
-let g:ycm_key_list_select_completion = ['<C-n>', '<C-f>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-b>', '<C-p>', '<C-k>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<c-n>'
 map <leader>f :YcmCompleter FixIt<CR>
-
-nmap <leader>e : UltiSnipsEdit<CR>
-function! g:UltiSnips_Complete()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res == 0
-        if pumvisible()
-            return "\<C-n>"
-        else
-            call UltiSnips#JumpForwards()
-            if g:ulti_jump_forwards_res == 0
-               return "\<TAB>"
-            endif
-        endif
-    endif
-    return ""
-endfunction
-au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-let g:UltiSnipsUsePythonVersion=2
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-let g:UltiSnipsListSnippets="<c-e>"
-let g:UltiSnipsEditSplit="context"
-let g:UltiSnipsSnippetsDir="/home/lidong05/src/autosetup/ultisnips"
-let g:UltiSnipsSnippetDirectories=["/home/lidong05/src/autosetup/ultisnips"]
-
-" Expand snippet or return
-let g:ulti_expand_res = 1
-function! Ulti_ExpandOrEnter()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res
-        return ''
-    else
-        return "\<return>"
-endfunction
-
-" Set <space> as primary trigger
-inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
 
 set background=dark    " Setting dark mode
 
