@@ -89,7 +89,6 @@ map <leader>f :YcmCompleter FixIt<CR>
 
 set background=dark    " Setting dark mode
 
-"show tabs
 let g:airline#extensions#tabline#enabled = 1
 " Show just the filename
 let g:airline#extensions#tabline#fnamemod = ':t'
@@ -144,25 +143,21 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
 set expandtab
 
 set autoindent
 set smartindent
 set cindent
-set cinoptions=>2
 
 "paste mode switch using F2
 nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
 set showmode
 
-"configure the colors
-" let g:solarized_termcolors=256
-" colorschem solarized
-" colorscheme gruvbox
-" colorscheme clarity
-"highlight Pmenu ctermbg=238 gui=bold
-" colorscheme dark-ruby
 syntax on
 set background=dark
 set hlsearch
@@ -177,8 +172,6 @@ endif
 hi Normal ctermbg=none
 highlight NonText ctermbg=none
 set nu
-set spell spelllang=en_us
-setlocal spell spelllang=en_us
 set autowrite
 "set nowrap
 set exrc
