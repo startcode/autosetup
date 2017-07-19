@@ -19,6 +19,7 @@ def gen_getter(v_type, v_name):
         return \
 """%s %s() const { return _%s; }""" % (v_type, v_name, v_name)
 
+# function to generate setter
 def gen_setter(v_type, v_name):
     if not is_copy_type(v_type):
         v_type = "const %s&" % v_type;
