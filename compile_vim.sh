@@ -29,6 +29,8 @@ make distclean
 make
 sudo make install
 
+sudo apt-get install vim-gui-common vim-runtime
+
 cd ../..
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 cp vimrc ~/.vimrc
