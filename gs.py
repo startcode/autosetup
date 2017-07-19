@@ -10,6 +10,7 @@ def is_copy_type(v_type):
         return True
     return False
 
+# gen_getter
 def gen_getter(v_type, v_name):
     if not is_copy_type(v_type):
         const_getter = "const %s& %s() const { return _%s; }\n"% (v_type, v_name, v_name)
