@@ -1,6 +1,6 @@
 " #####################################
 " Get vundle before using this configuration
-" git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 " after install,
 " ~/.vim/bundle/YouCompleteMe/install.sh --clang-completer
 "########################################
@@ -9,7 +9,7 @@ filetype off                   " required!
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
 
 "==================
 Plugin 'a.vim'
@@ -34,6 +34,7 @@ Plugin 'rhysd/vim-clang-format'
 Plugin 'tpope/vim-fugitive'
 "==================
 call vundle#end()            " required
+filetype plugin indent on     " required! 
 
 call glaive#Install()
 "google style auto format"
@@ -53,7 +54,6 @@ augroup autoformat_settings
   " autocmd FileType python AutoFormatBuffer autopep8
 augroup END
 
-filetype plugin indent on     " required! 
 
 let mapleader=","
 
