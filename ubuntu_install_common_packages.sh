@@ -11,7 +11,7 @@ sudo apt-get dist-upgrade -y
 
 packages=(
 ack-grep
-clang-format-3.8
+clang-format-3.9
 apt-file
 aptitude
 autoconf
@@ -45,7 +45,7 @@ apt-get clean -y
 
 
 # for vim configurations
-bash ./compile_vim.sh
+#bash ./compile_vim.sh
 
 # for tmux configurations
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+#git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
