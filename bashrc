@@ -144,15 +144,28 @@ fi
 export VISUAL=vim
 export EDITOR=$VISUAL
 set -o vi
+alias cvi='vim -u NONE' # clean vim
 alias sbrc='source ~/.bashrc'
 alias ack='ack-grep'
 alias tl='tmux ls'
 alias ta='tmux attach -t'
+alias td='tmux a -dt'
+
 alias amend='git commit -a --amend'
-alias pull='git pull'
 export GOPATH="$HOME/.go"
 export JAVA_HOME="/usr/lib/jvm/java-8-oracle"
-export PATH="/home/lidong05/.go/bin":$PATH
+export PATH="/usr/local/cuda/bin:/home/lidong05/.go/bin:/home/lidong05/.Comake2/comake:/home/lidong05/.BCloud/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 alias eclipse="/home/lidong05/src/eclipse/eclipse"
 alias grc='git rebase --continue'
 alias gs='git status'
+alias ga='git add'
+alias amend='git commit -a --amend'
+alias upgrade='sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y'
+alias gc='git checkout'
+alias greset='git checkout HEAD~1' 
+alias gdiff='git diff HEAD~1'
+alias gpick='git cherry-pick'
+alias gfdiff='git diff HEAD~1 --name-only'
+alias eclipse='./opt/eclipse/eclipse'
+alias open='xdg-open'

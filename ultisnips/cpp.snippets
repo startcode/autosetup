@@ -69,12 +69,33 @@ snippet iutil "#include <utility>"
 #include <utility>
 endsnippet
 
+snippet ialgo "#include <algorithm>"
+#include <algorithm>
+endsnippet
+
 snippet imem "#include <memory>"
 #include <memory>
 endsnippet
 
+snippet iarr "#include <array>"
+#include <array>
+endsnippet
+
+snippet iuset "#include <unordered_set>"
+#include <unordered_set>
+endsnippet
+
+snippet imath "#include <cmath>"
+#include <cmath>
+endsnippet
+
 snippet vector "std::vector (v)"
 std::vector<${1:char}> v$0;
+endsnippet
+
+snippet GF "define gflags"
+DECLARE_$1($2);
+DEFINE_$1($2, "${3:default value}", "${4:help}");
 endsnippet
 
 snippet tp "template <typename ..> (template)"

@@ -3,6 +3,8 @@
 " git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 " after install,
 " ~/.vim/bundle/YouCompleteMe/install.sh --clang-completer
+" mkdir -p syntax
+" wget https://raw.githubusercontent.com/google/protobuf/master/editors/proto.vim -o ~/.vim/syntax
 "########################################
 set nocompatible               " be iMproved
 filetype off                   " required!
@@ -17,6 +19,7 @@ Plugin 'tcomment'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/tpope-vim-abolish'  "underscore <-> camel case conversion
+" crs (coerce to snake_case). MixedCase (crm), camelCase (crc), snake_case (crs), UPPER_CASE (cru), dash-case (cr-), dot.case (cr.), space case (cr<space>),
 Plugin 'tpope/vim-repeat'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'vim-airline/vim-airline'
@@ -35,23 +38,34 @@ Plugin 'rhysd/vim-clang-format'
 Plugin 'tpope/vim-fugitive'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'uplus/vim-clang-rename'
+Plugin 'ihacklog/HiCursorWords' "highlight words under cursor"
 "==================
 call vundle#end()            " required
-filetype plugin indent on     " required! 
+filetype plugin indent on     " required!
+
+inoremap jj <esc>
+inoremap jk <esc>
 
 call glaive#Install()
 "google style auto format"
+
+augroup filetype
+  au! BufRead,BufNewFile *.proto setfiletype proto
+augroup end
+
 Glaive codefmt plugin[mappings]
 Glaive codefmt google_java_executable="java -jar /path/to/google-java-format-VERSION-all-deps.jar"
+Glaive codefmt clang_format_style="Google"
 map <C-I> :pyf /usr/share/clang/clang-format-3.9/clang-format.py<CR>
 imap <C-I> <ESC>:pyf /usr/share/clang/clang-format-3.9/clang-format.py<CR>i
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType cc,c,cpp,javascript AutoFormatBuffer clang-format
+  autocmd FileType cc,c,cpp,cu,javascript AutoFormatBuffer clang-format
   autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
   autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,json AutoFormatBuffer js-beautify
+  "autocmd FileType html,css,json AutoFormatBuffer js-beautify
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer yapf
   " autocmd FileType python AutoFormatBuffer autopep8
@@ -62,13 +76,6 @@ let mapleader=","
 set completeopt=longest,menu "vimtip 1228
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif "close window after insert
 autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-"inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
-"inoremap <expr> <Up> pumvisible() ? "\<C-k>" : "\<Up>"
-"inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>":"\<PageDown>"
-"inoremap <expr> <PageUp> pumvisible() ? "\<PageUp>\<C-p>\<C-n>":"\<PageUp>"
-
-"let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <F6> :YcmForceCompileAndDiagnostics<CR>	"force recomile with syntastic
@@ -77,6 +84,7 @@ nnoremap <leader>lc :lclose<CR>	"close locationlist
 inoremap <leader><leader> <C-x><C-o>
 let g:ycm_always_populate_location_list=1
 let g:ycm_confirm_extra_conf=0
+let g:ycm_global_ycm_extra_conf="/home/lidong05/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
 let g:ycm_collect_identifiers_from_tags_files=1
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
 let g:ycm_min_num_of_chars_for_completion=2
@@ -90,15 +98,27 @@ let g:ycm_filetype_blacklist = {
       \}
 map <leader>f :YcmCompleter FixIt<CR>
 
+function! s:CustomizeYcmLocationWindow()
+  " Move the window to the top of the screen.
+  wincmd K
+  " Set the window height to 5.
+  5wincmd _
+  " Switch back to working window.
+  wincmd p
+endfunction
+
+autocmd User YcmLocationOpened call s:CustomizeYcmLocationWindow()
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+nmap <leader>e :UltiSnipsEdit
 let g:UltiSnipsSnippetDirectories=["/home/lidong05/github/autosetup/ultisnips"]
 function! g:UltiSnips_Complete()
     call UltiSnips#ExpandSnippet()
     if g:ulti_expand_res == 0
         if pumvisible()
-            return "\<C-n>"
+            "return "\<C-n>"
+            return "\<TAB>"
         else
             call UltiSnips#JumpForwards()
             if g:ulti_jump_forwards_res == 0
@@ -110,13 +130,13 @@ function! g:UltiSnips_Complete()
 endfunction
 
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-e>"
 " this mapping Enter key to <C-y> to chose the current highlight item 
 " and close the selection list, same as other IDEs.
 " CONFLICT with some plugins like tpope/Endwise
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-nmap <leader>e :UltiSnipsEdit
 
 set background=dark    " Setting dark mode
 
