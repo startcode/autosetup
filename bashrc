@@ -29,8 +29,12 @@ case $- in
       *) return;;
 esac
 
-parse_git_branch() {
-   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'
+git_branch() {
+   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/[* ]//g'
+}
+
+square_git_branch() {
+    git_branch | sed -e 's/\(.*\)/[\1]/'
 }
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -41,8 +45,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+#HISTSIZE=1000
+#HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -82,16 +86,16 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[33m\]$(parse_git_branch)\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[33m\]$(square_git_branch)\[\033[00m\]\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\W$(parse_git_branch)\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\W$(square_git_branch)\$ '
 fi
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \W$(parse_git_branch)\a\]$PS1"
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \W$(square_git_branch)\a\]$PS1"
     ;;
 *)
     ;;
@@ -146,26 +150,48 @@ export EDITOR=$VISUAL
 set -o vi
 alias cvi='vim -u NONE' # clean vim
 alias sbrc='source ~/.bashrc'
-alias ack='ack-grep'
 alias tl='tmux ls'
 alias ta='tmux attach -t'
 alias td='tmux a -dt'
 
+alias upgrade='sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y'
+
 alias amend='git commit -a --amend'
 export GOPATH="$HOME/.go"
 export JAVA_HOME="/usr/lib/jvm/java-8-oracle"
-export PATH="/usr/local/cuda/bin:/home/lidong05/.go/bin:/home/lidong05/.Comake2/comake:/home/lidong05/.BCloud/bin:$PATH"
-export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+export PATH="/usr/local/cuda/bin:/home/lidong05/.go/bin:/home/lidong05/.Comake2/comake:/home/lidong05/.BCloud/bin:/usr/local/Qt/5.11.1/gcc_64/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 alias eclipse="/home/lidong05/src/eclipse/eclipse"
 alias grc='git rebase --continue'
+alias grs='git rebase --skip'
 alias gs='git status'
 alias ga='git add'
+alias gua='git update-index --assume-unchanged'
+alias guna='git update-index --no-assume-unchanged'
 alias amend='git commit -a --amend'
-alias upgrade='sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y'
 alias gc='git checkout'
-alias greset='git checkout HEAD~1' 
+alias greset='git checkout HEAD~1'
 alias gdiff='git diff HEAD~1'
 alias gpick='git cherry-pick'
 alias gfdiff='git diff HEAD~1 --name-only'
+alias gpush='git push -f origin $(git_branch)'
 alias eclipse='./opt/eclipse/eclipse'
 alias open='xdg-open'
+alias codeserver='sshpass -p baidu123 ssh -oStrictHostKeyChecking=no apollo@172.19.57.26'
+
+alias apollo='cd /home/lidong05/github/apollo'
+
+alias bstart='bash /home/lidong05/github/apollo-internal/docker/scripts/dev_start.sh'
+alias binto='bash /home/lidong05/github/apollo-internal/docker/scripts/dev_into.sh'
+alias bstop='docker stop apollo_dev'
+alias rstart='bash /home/lidong05/github/apollo-internal/docker/scripts/release_start.sh'
+alias rinto='bash /home/lidong05/github/apollo-internal/docker/scripts/release_into.sh'
+alias rstop='docker stop apollo_release'
+alias net_baidu='sudo route del default; sudo route add default gw 172.19.20.1'
+alias net_4g='sudo route del default; sudo route add default gw 192.168.10.1'
+
+
+# added by Anaconda3 installer
+export PATH="/home/lidong05/anaconda3/bin:$PATH"
+
+. /home/lidong05/anaconda3/etc/profile.d/conda.sh

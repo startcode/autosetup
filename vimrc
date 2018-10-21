@@ -14,32 +14,21 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 "==================
-Plugin 'a.vim'
+Plugin 'startcode/a.vim'
 Plugin 'tcomment'
-Plugin 'altercation/vim-colors-solarized'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/tpope-vim-abolish'  "underscore <-> camel case conversion
 " crs (coerce to snake_case). MixedCase (crm), camelCase (crc), snake_case (crs), UPPER_CASE (cru), dash-case (cr-), dot.case (cr.), space case (cr<space>),
-Plugin 'tpope/vim-repeat'
 Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tacahiroy/ctrlp-funky'
-Plugin 'jeetsukumaran/vim-buffergator'
-Plugin 'morhetz/gruvbox'
 Plugin 'ervandew/supertab'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'bogado/file-line' "open file:line format
 Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmt'
 Plugin 'google/vim-glaive'
-Plugin 'rhysd/vim-clang-format'
-Plugin 'tpope/vim-fugitive'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'uplus/vim-clang-rename'
-Plugin 'ihacklog/HiCursorWords' "highlight words under cursor"
+Plugin 'ap/vim-buftabline'
 "==================
 call vundle#end()            " required
 filetype plugin indent on     " required!
@@ -60,8 +49,9 @@ Glaive codefmt clang_format_style="Google"
 map <C-I> :pyf /usr/share/clang/clang-format-3.9/clang-format.py<CR>
 imap <C-I> <ESC>:pyf /usr/share/clang/clang-format-3.9/clang-format.py<CR>i
 augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType cc,c,cpp,cu,javascript AutoFormatBuffer clang-format
+  autocmd FileType BUILD,bzl AutoFormatBuffer buildifier
+  "autocmd FileType cc,c,cpp,cu,javascript AutoFormatBuffer clang-format
+  autocmd FileType cc,c,cpp,cu AutoFormatBuffer clang-format
   autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
   autocmd FileType gn AutoFormatBuffer gn
@@ -73,6 +63,9 @@ augroup END
 
 let mapleader=","
 
+let g:better_whitespace_enabled=1
+let g:strip_whitespace_on_save=1
+
 set completeopt=longest,menu "vimtip 1228
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif "close window after insert
 autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
@@ -83,8 +76,9 @@ nnoremap <leader>lo :lopen<CR>	"open locationlist
 nnoremap <leader>lc :lclose<CR>	"close locationlist
 inoremap <leader><leader> <C-x><C-o>
 let g:ycm_always_populate_location_list=1
+let g:ycm_server_python_interpreter = '/home/lidong05/anaconda3/bin/python'
 let g:ycm_confirm_extra_conf=0
-let g:ycm_global_ycm_extra_conf="/home/lidong05/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 let g:ycm_collect_identifiers_from_tags_files=1
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
 let g:ycm_min_num_of_chars_for_completion=2
@@ -109,31 +103,9 @@ endfunction
 
 autocmd User YcmLocationOpened call s:CustomizeYcmLocationWindow()
 
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-nmap <leader>e :UltiSnipsEdit
-let g:UltiSnipsSnippetDirectories=["/home/lidong05/github/autosetup/ultisnips"]
-function! g:UltiSnips_Complete()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res == 0
-        if pumvisible()
-            "return "\<C-n>"
-            return "\<TAB>"
-        else
-            call UltiSnips#JumpForwards()
-            if g:ulti_jump_forwards_res == 0
-               return "\<TAB>"
-            endif
-        endif
-    endif
-    return ""
-endfunction
+au FileType c,cpp,cc nmap <buffer><silent>,lr <Plug>(clang_rename-current)
 
-au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-let g:UltiSnipsExpandTrigger="<c-j>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsListSnippets="<c-e>"
-" this mapping Enter key to <C-y> to chose the current highlight item 
+" this mapping Enter key to <C-y> to chose the current highlight item
 " and close the selection list, same as other IDEs.
 " CONFLICT with some plugins like tpope/Endwise
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
