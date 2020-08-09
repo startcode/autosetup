@@ -8,8 +8,35 @@ function setup() {
 export VISUAL=vim
 export EDITOR=vim
 
-## Common commands
-alias install='sudo apt-get install - y'
+## Common functions.
+## Accepts two arguments. Check if the first argumetn ends with the second argument.
+## returns 0 if true.
+function ends_with() {
+ if [ "$#" -ne 2 ]; then
+  echo "requires two arguments"
+  return -1
+ fi
+ text="$1"
+ end="$2"
+ if [[ $text =~ .*"$end"$ ]]; then
+  return 0
+ fi
+ return 1
+}
+
+## A function to install a package name or a deb file.
+function install() {
+  target="$1"
+  ends_with $target ".deb"
+  result=$?
+  if [ $result == 0 ]; then
+      sudo dpkg -i $target
+  else
+      sudo apt-get install -y $target
+  fi
+}
+alias update='sudo apt-get update && sudo apt-get upgrade -y'
+
 alias sbrc='source ~/.bashrc'
 alias ack='ack-grep'
 alias die='sudo shutdown now'
