@@ -1,0 +1,275 @@
+snippet inc "include "
+#include "${1:${VISUAL}}"
+endsnippet
+
+snippet  bm "Add a benchmark" b
+void BM_$1(benchmark::State& state) {  // NOLINT
+  for (auto _ : state) {
+    benchmark::DoNotOptimize();
+  }
+}
+BENCHMARK(BM_$1);
+
+endsnippet
+
+snippet flatmap "" b
+absl::flat_hash_map
+endsnippet
+
+snippet mlevel "mlevel" w
+mapping::SemanticLevelId
+endsnippet
+
+snippet ns "namespace"
+namespace $1 {
+${VISUAL}
+}
+endsnippet
+
+snippet utest "tester" b
+TEST(${1:TestSuiteName}, ${2:TestName}) {
+ ${3: write code here}
+}
+endsnippet
+
+snippet ct "continue;" b
+continue;
+endsnippet
+
+snippet eq "EXPECT_EQ" b
+EXPECT_EQ($1, $2);
+endsnippet
+
+snippet et "EXPECT_EQ" b
+EXPECT_THAT($1, $2);
+endsnippet
+
+snippet en "EXPECT_EQ" b
+EXPECT_NEAR($1, $2, ${3:1e-8});
+endsnippet
+
+snippet qns "namespace qcraft" b
+namespace qcraft{
+}
+endsnippet
+
+
+
+snippet pns "namespace qcraft::planner" b
+namespace qcraft{
+namespace prediction {
+
+  ${VISUAL}
+
+}
+}
+endsnippet
+
+snippet class "classclasss" b
+class $1 {
+public:
+
+  $1();
+
+  ~$1() {}
+
+private:
+
+};
+
+endsnippet
+
+snippet ivec2d "#include vec2d.h"
+#include "onboard/math/vec.h"
+endsnippet
+
+snippet itestutil "#include test_util.h"
+#include "onboard/math/test_util.h"
+endsnippet
+
+
+snippet istrong_vector  "#include strong_vector.h"
+#include "onboard/base/strong_vector.h"
+
+endsnippet
+
+snippet igmock "#include gmock"
+#include "gmock/gmock.h"
+
+endsnippet
+
+snippet for "for i"
+for(int i=0;i<$1;++i)
+{
+}
+endsnippet
+
+snippet forr "for range"
+for(auto &${1:element}:${2:container})
+{
+}
+endsnippet
+
+snippet fname "Get the filename." b
+"`!p snip.rv = path`"
+endsnippet
+
+snippet finc "include current source's header." b
+#include "${1:`!p snip.rv = path.replace('_test.cc', '.h').replace('.cc', '.h')`}"
+endsnippet
+
+snippet ftest "create a test file"
+#include "${1:`!p snip.rv = path.replace('_test.cc', '.h').replace('.cc', '.h')`}"
+
+
+#include "gtest/gtest.h"
+
+namespace qcraft {
+namespace {
+TEST(, ) {
+
+}
+}
+}
+
+endsnippet
+
+snippet fbm "create a benchmark file"
+#include "${1:`!p snip.rv = path.replace('_bm.cc', '.h')`}"
+
+
+#include "benchmark/benchmark.h"
+
+namespace qcraft {
+namespace {
+
+void BM_${1:name}(benchmark::State& state) { // NOLINT
+  for (auto _ : state) {
+    benchmark::DoNotOptimize($2);
+	}
+}
+BENCHMARK(BM_$1);
+
+}
+}
+
+BENCHMARK_MAIN();
+
+endsnippet
+
+snippet var "define a variable" b
+
+${1:type} ${2:name}() const { return $2_; }
+
+$1 $2_;
+
+endsnippet
+
+
+snippet flatmap "absl::flat_hash_map"
+absl::flat_hash_map
+endsnippet
+
+snippet flatset "absl::flat_hash_set"
+absl::flat_hash_set
+endsnippet
+
+snippet imem "#include <memory>"
+#include <memory>
+endsnippet
+
+snippet ivec "#include <vector>" b
+#include <vector>
+endsnippet
+
+snippet iuti "#include <utility>" b
+#include <utility>
+endsnippet
+
+snippet istr "#include <string>" b
+#include <string>
+endsnippet
+
+snippet iumap "#include <unordered_map>" b
+#include <unordered_map>
+endsnippet
+
+snippet imap "#include <map>" b
+#include <map>
+endsnippet
+
+snippet iset "#include <set>" b
+#include <set>
+endsnippet
+
+snippet iflag "include gflag" b
+#include "gflags/gflags.h"
+endsnippet
+
+snippet ilog "include logging" b
+#include "glog/logging.h"
+endsnippet
+
+snippet iopt "include optioanl" b
+#include "absl/types/optional.h"
+endsnippet
+
+snippet ispan "include absl::Span" b
+#include "absl/types/span.h"
+endsnippet
+
+snippet istrcat"include absl::StrCat" b
+#include "absl/strings/str_cat.h"
+endsnippet
+
+snippet istrformat "include absl::StrFormat" b
+#include "absl/strings/str_format.h"
+endsnippet
+
+snippet iflatmap "include absl::flat_hash_map" b
+#include "absl/container/flat_hash_map.h"
+endsnippet
+
+snippet iflatset "include absl::flat_hash_set" b
+#include "absl/container/flat_hash_set.h"
+endsnippet
+
+snippet ibox2d "#include box2d" b
+#include "onboard/math/geometry/box2d.h"
+endsnippet
+
+snippet istatus "#include status" b
+#include "absl/status/status.h"
+endsnippet
+
+snippet istatusor "#include status" b
+#include "absl/status/statusor.h"
+endsnippet
+
+snippet istatusmacro "#include status macros" b
+#include "onboard/utils/status_macros.h"
+endsnippet
+
+snippet itime "#include absl time" b
+#include "absl/time/time.h"
+endsnippet
+
+snippet hinc "Add dependency include"
+`!p snip.rv = '#include "' + snip.v.text.strip() + '"'`
+endsnippet
+
+snippet naming "NOLINT"
+ // NOLINT(readability-identifier-naming)
+endsnippet
+snippet namingn "NOLINT"
+ // NOLINTNEXTLINE(readability-identifier-naming)
+endsnippet
+
+snippet funcsize "NOLINT"
+ // NOLINTNEXTLINE(readability-function-size)
+endsnippet
+
+snippet copyvalue "unnecessary value"
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
+endsnippet
+

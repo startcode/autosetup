@@ -1,0 +1,17 @@
+snippet fproto "create a proto file" b
+syntax = "proto2";
+package qcraft;
+
+message ${1:Message} {
+ optional ${2:type} ${3:name}= 1;
+}
+
+endsnippet
+
+snippet od "optional double" b
+    optional double ${1name}= ${2:n};
+endsnippet
+
+snippet ob "optional bool" b
+    optional bool ${1name}= ${2:n};
+endsnippet

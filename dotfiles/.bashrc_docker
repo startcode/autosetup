@@ -1,0 +1,516 @@
+set -o vi
+
+export VISUAL=vim
+export EDITOR=vim
+
+export OFFICE='beijing-tf'
+
+export PATH=$PATH:/usr/local/go/bin:/home/$USER/go/bin
+
+#alias update='sudo apt-get update && sudo apt-get upgrade -y'
+alias sbrc='source ~/.zshrc'
+alias die='sudo shutdown now'
+
+# To disable git branch pager:
+# git config --global pager.branch false
+
+alias rsound='sudo alsa force-reload'
+alias ecmd='vim ~/.extra_cmd'
+alias evi='vim ~/.vimrc'
+alias sd='./scripts/start_dev_docker.sh'
+alias gd='./scripts/goto_dev_docker.sh'
+alias vi='vim'
+alias tark='dev-env/scripts/run.sh ark'
+alias tvantage='dev-env/scripts/run.sh vantage'
+alias gitresetcache='git rm --cached -r . && git reset --hard'
+alias lscore='ls -d -1 -lt $(dirname $(cat /proc/sys/kernel/core_pattern))/*'
+alias rmcore='rm -f $(dirname $(cat /proc/sys/kernel/core_pattern))/*'
+alias tidyfix='bash experimental/eg/tools/tidy_fix.sh -c'
+alias pretest='./scripts/pretest.sh'
+
+function worktree_clean() {
+  find .git/modules -iname "config" | xargs sed -i '/worktree/d'
+}
+
+alias formatbash='shfmt -i 2 -ci -w '
+
+function parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+}
+
+
+function disable_scaling() {
+# sudo apt install linux-tools-4.18.0-25-generic
+sudo cpupower frequency-set -g performance
+}
+
+## Tmux shortcuts
+alias tl='tmux ls'
+alias ta='tmux attach -t'
+alias td='tmux attach -d -t'
+alias tk='tmux kill-session -t'
+alias open='xdg-open'
+
+# vim format.
+function vf() {
+ for f in $@; do
+   vim -c ":wq" ${f}
+ done
+}
+
+## Git shortcuts
+alias gsu='git submodule update'
+alias gfetch='git fetch --all --tags --prune'
+alias gresetsubmodule='git submodule update --init'
+alias gdiff='git diff HEAD~1'
+alias gf='git diff --name-only HEAD~1'
+alias greset='git checkout HEAD~1'
+alias grc='git rebase --continue'
+alias gbr='git branch'
+alias gcm='git checkout master'
+alias gra='git rebase --abort'
+alias grs='git rebase --skip'
+alias hx='git branch'
+alias unamend='git reset --soft HEAD@{1}'
+alias grthis='git checkout --theirs'
+alias grbase='git checkout --ours'
+
+function pull() {
+git submodule update
+if [[ "$1" == "t" ]]; then
+  git pull --rebase -Xtheirs origin master
+elif [[ "$1" == "o" ]]; then
+  git pull --rebase -Xours origin master
+else
+  git pull --rebase origin master
+fi
+
+git submodule update
+}
+
+function amend() {
+  last_commit=$(git show -s --format='%ae')
+  if echo ${last_commit} | grep "$USER" > /dev/null; then
+   git commit --amend -a --no-edit $@
+  else
+   echo "Don't amend to other's commit"
+  fi
+}
+
+function ff() {
+  scripts/format.sh --git
+  amend
+}
+
+
+
+function gresetmap() {
+  git rm --cached -r .
+  git reset --hard
+  git rm .gitattributes
+  git reset .
+  git checkout .
+}
+
+# git checkout a branch
+function gc() {
+ if [ $# != 1 ]; then
+   echo "usage: gc branch_name"
+   return
+ fi
+ branch_name=$1
+ git checkout $USER/${branch_name}
+}
+
+# Delete local branch.
+function gdelb() {
+ for branch_name in $@; do
+   current_branch="$(parse_git_branch)"
+   if [[ "${current_branch}" == "${branch_name}" ]]; then
+      git checkout master
+   fi
+   git branch -D "${branch_name}"
+ done
+}
+alias g4del=gdelb
+
+# Delete remote branch
+function gdelrb () {
+ if [ $# != 1 ]; then
+   echo "usage: gdelrb branch_name"
+   return
+ fi
+ # remote branch is $USER/${branch_name}
+ branch_name=$1
+ git push origin --delete "$USER/${branch_name}"
+}
+
+
+function push() {
+  branch=$(parse_git_branch)
+  if grep -q "$USER" <<< "${branch}"; then
+     git push -f origin ${branch}
+  else
+     echo "Not contain your user name in branch, check by yourself"
+     echo "git push -f origin ${branch}"
+  fi
+}
+
+function mount_media() {
+# Run outside of docker.
+scripts/mount_nfs.sh --clean
+sudo mount -t nfs 172.18.1.10:/volume1/data/users /media/users
+}
+
+
+# scenario test.
+function st() {
+    name=$1
+    shift
+    echo "Testing scenario ${name} with extra flags: $@"
+    BAZEL_FLAGS=--config=cpu CPU_ONLY=true scripts/run_simulation.sh --scenario_name=${name} $@
+}
+
+function repeat_st() {
+  branch=$(parse_git_branch)
+  TO_ACK=true ./scripts/run_remote_simulation_test.sh -b "${branch}"  -s scenario_cn --scenario_re=$1 --china_mode --description="Determinism Analysis" --repeat=20
+}
+
+function st_dump() {
+  if [ $# != 2 ]; then
+    echo "$0 scenario_name dump_dir"
+    return
+  fi
+  name=$1
+  dir=$2
+  rm -rf "${dir}"
+  mkdir -p ${dir}
+  st ${name} --dump_planner_output=${dir} > ${dir}/runtime.log
+  echo "logs are in ${dir}/runtime.log"
+}
+
+function stdiff() {
+  if [ $# != 2 ]; then
+    echo "$0 scenario_name base_branch"
+    return
+  fi
+  name=$1
+  base_branch=$2
+
+  st_dump ${name} /tmp/test
+
+  git checkout ${base_branch}
+  st_dump ${name} /tmp/base
+  diff -x "*.log" -x "*.all.pb.txt" /tmp/base /tmp/test
+  if [ $? == 0 ]; then
+    echo "There is no diff"
+  fi
+  echo -e "See log diff by\nvimdiff /tmp/base/runtime.log /tmp/test/runtime.log"
+}
+
+function stset() {
+  test_set="must-pass"
+  if [[ ! -z $1 ]] ; then
+    test_set=$1
+  fi
+
+  CPU_ONLY=true OFFICE=beijing-tf PARALLEL=true scripts/run_scenario_test.sh --test_sets=${test_set} --china_mode
+}
+
+all_tests() {
+    bazel query 'kind(cc_.*, tests(//...))' 2> /dev/null
+}
+
+all_targets() {
+   echo "//onboard/... //offboard/..."
+}
+
+function get_target() {
+    file=$1
+    if [[ -d ${file} ]]; then
+      echo "${file%/}/..."
+    elif [[ -e ${file} ]]; then
+        bname=$(basename ${file})
+        bname_noext=${bname%.*}
+        dname=$(dirname ${file})
+        echo "//${dname}:${bname_noext}"
+    else
+        echo ${file}
+    fi
+}
+
+function get_test_target() {
+    file=$1
+    if [ -e ${file} ]; then
+        bname=$(basename ${file})
+        bname_noext=${bname%.*}
+        if ! grep -q "_test$" <<< "${bname_noext}"; then
+            bname_noext="${bname_noext}_test"
+        fi
+        dname=$(dirname ${file})
+        echo "//${dname}:${bname_noext}"
+    else
+       echo ${file}
+    fi
+}
+
+function get_targets() {
+    targets="";
+    for f in $@; do
+        targets="${targets} $(get_target ${f})"
+    done
+    echo ${targets}
+}
+function get_test_targets() {
+    targets="";
+    for f in $@; do
+        targets="${targets} $(get_test_target ${f})"
+    done
+    echo ${targets}
+}
+
+opt_args="-c opt"
+
+function t() {
+  if [ $# == 0 ]; then
+    bazel test ${opt_args}  --test_output=errors $(all_tests)
+  else
+    bazel test ${opt_args}  --test_output=errors $(get_test_targets $@)
+  fi
+}
+
+function b() {
+  if [ $# == 0 ]; then
+    bazel build ${opt_args} $(all_targets)
+  else
+    bazel build ${opt_args} $(get_targets $@)
+  fi
+}
+
+function cyc() {
+  bazel build --config=oclint $(get_targets $@)
+  tools/eg/cyc_violation_stats.py -s $@
+}
+
+function tidy() {
+  if [ $# == 0 ]; then
+    bazel build --config=tidy $(all_targets)
+  else
+    bazel build --config=tidy $(get_targets $@)
+  fi
+}
+
+function tidycheck() {
+  files=""
+  if [[ $# == 0 ]]; then
+    files=$(git diff --ignore-submodules --diff-filter=d --name-only HEAD~1)
+  else
+    files=$@
+  fi
+  for target in ${files}; do
+    if [[ -d "${target}" ]]; then
+      # Fixing a directory
+      bazel build --config=tidy "${target}"
+      continue
+    fi
+    real_target=$(get_target ${target})
+    bazel build --config=tidy ${real_target}
+  done
+}
+
+function dwyu() {
+    bazel build --config=dwyu $(get_targets $@)
+}
+function dwyufix() {
+  files=""
+  if [[ $# == 0 ]]; then
+    files=$(git diff --ignore-submodules --diff-filter=d --name-only HEAD~1)
+  else
+    files=$@
+  fi
+  for target in ${files}; do
+    if [[ -d "${target}" ]]; then
+      # Fixing a directory
+      tools/eg/dwyu/dwyu_fix.py "${target}"
+      continue
+    fi
+    real_target=$(dirname ${target})
+    tools/eg/dwyu/dwyu_fix.py "${real_target}"
+  done
+}
+
+function coverage() {
+  bazel coverage $(get_targets $@)
+  genhtml --branch-coverage --output genhtml "$(bazel info output_path)/_coverage/_coverage_report.dat"
+  cd genhtml && python3 -m http.server 9091 && cd -
+}
+
+function iwyu() {
+  if [ $# == 0 ]; then
+    bazel build --config=iwyu $(all_targets)
+  else
+    bazel build --config=iwyu $(get_targets $@)
+  fi
+}
+
+function iwyucheck() {
+  scripts/ci/iwyu_check.py -k -s direct 
+}
+
+
+
+function iwyufix() {
+  files=""
+  if [[ $# == 0 ]]; then
+    files=$(git diff --ignore-submodules --diff-filter=d --name-only HEAD~1)
+  else
+    files=$@
+  fi
+  for target in ${files}; do
+    if [[ -d "${target}" ]]; then
+      # Fixing a directory
+      tools/eg/iwyu_fix.py -c "${target}"
+      continue
+    fi
+    real_target=$(get_target ${target})
+    tools/eg/iwyu_fix.py -c -t ${real_target}
+  done
+}
+
+function bt() {
+  b $@ && t $@
+}
+
+
+# Build and test current commit.
+function btc() {
+  files=$(gf)
+}
+
+function ft() {
+  scripts/format.sh --git
+}
+
+alias btp='bt onboard/planner/...'
+
+function asan() {
+  t --config=asan $@
+}
+
+function msan() {
+  t --config=msan $@
+}
+
+function tsan() {
+  t --config=tsan $@
+}
+
+function ubsan() {
+  t --config=ubsan $@
+}
+
+all_targets="//onboard/... //offboard/... //experimental/..."
+function btall() {
+  b ${all_targets} && t ${all_targets} 
+
+}
+function abtall() {
+  b ${all_targets} &&  t --config=asan ${all_targets}
+}
+
+function bm() {
+    bazel run ${opt_args} $(get_target $@)
+}
+
+function iwyu_check() {
+  scripts/ci/iwyu_check.py -k -s relevant
+}
+
+function dump_snapshot() {
+  if [[ $# != 3 ]]; then
+    echo "Usage: $0 run start end"
+    return
+  fi
+  run=$1
+  start=$2
+  end=$3
+  ./scripts/dump_snapshot.sh --run=$run --start=$start --end=$end
+}
+
+function run_snapshot() {
+  if [[ $# != 1 ]]; then
+    echo "Usage: $0 snapshot_path"
+    return
+  fi
+  snapshot=$1
+  ./scripts/run_snapshot_test.sh --snapshot_path="${snapshot}"
+}
+
+function somepath() {
+  if [[ $# != 2 ]]; then
+    echo "somepath target1 target2"
+    return
+  fi
+  target1=$(get_target $1)
+  target2=$(get_target $2)
+  bazel query "somepath(${target1}, ${target2})"
+}
+
+function get_core() {
+   run_name="$1"
+   mkdir -p "${run_name}"
+   core_path="/media/s3/run_data_2/${run_name}/core.tar"
+   echo "Loading from ${core_path}"
+   tar xf "${core_path}" -C "${run_name}"
+   echo "Core file is saved to ${run_name}"
+}
+function druncore() {
+  run_name="$1"
+  if [[ ! -d ${run_name} ]]; then
+     ./scripts/get_core.sh ${run_name}
+  fi
+  core_files=$(ls -d -1  ${run_name}/core/*)
+  if [[ ${#core_files[@]} == 0 ]]; then
+     echo "There is no core file found in ${run_name}"
+     return
+  fi
+  bazel build -c opt --config=release //onboard/lite:launch_autonomy_main
+  echo "Core file are: "
+  i=0
+  for f in ${core_files}; do
+    echo "${i} ${f}"
+    ((i=i+1))
+  done
+  read -p "Input the core file number: [0 - ${#core_files[@]}]: " core_index
+  core_files_array=(${core_files}) # Convert to array.
+  echo "Index is ${core_index}"
+  echo "Core path is ${core_files_array[core_index]}"
+  gdb bazel-bin/onboard/lite/launch_autonomy_main "${core_files_array[core_index]}"
+}
+
+function dsimcore() {
+  core_file=$1
+  if [[ $# == 0 ]]; then
+   echo "Found core files:\n$(ls -d -1 -lt $(dirname $(cat /proc/sys/kernel/core_pattern))/*)"
+   core_file=$(ls -t $(dirname $(cat /proc/sys/kernel/core_pattern))/* | head -n1)
+  fi
+  echo "Using $core_file"
+  bazel build -c opt -g1 //offboard/simulation:simulator_main 
+  gdb bazel-bin/offboard/simulation/simulator_main $core_file
+}
+
+function culprit() {
+  if [[ $# != 1 ]]; then
+    echo "Usage: $0 scenario_name"
+    return
+  fi
+  scenario_name="$1"
+  CULPRIT_COUNT=10 PARALLEL=true CPU_ONLY=true scripts/run_scenario_test_culprit.sh --scenario_re=${scenario_name}  --print_logs --china_mode
+}
+
+function s2wv() {
+  scenario_name=$1
+  run_name=$(echo "${scenario_name}" | awk '{split($0, arr, "_"); print arr[1] "_" arr[2] "_" arr[3];}')
+  offset=$(echo "${scenario_name}" | awk '{split($0, arr, "_"); print arr[4];}')
+  echo "http://vantage.qcraftai.com/?run=${run_name}&offset=${offset}"
+}

@@ -1,0 +1,7 @@
+snippet rjf "read json file" b
+import json
+with open('data.json', 'r') as f:
+  data = json.load(f)
+  for i in data['emp_details']:
+   print(i)
+endsnippet

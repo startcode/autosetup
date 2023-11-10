@@ -1,0 +1,225 @@
+snippet fbuild "build file" b
+load("//build_tools/build_rules:cpplint.bzl", "cpplint")
+load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
+
+package(default_visibility = ["//visibility:public"])
+###############################################################################
+# Libraries.
+
+###############################################################################
+# Protos.
+
+###############################################################################
+# Binaries.
+
+###############################################################################
+# Tests.
+
+cpplint()
+endsnippet
+
+global !p
+
+def extract_target(header):
+  header=header.strip()
+  if '"' not in header: return None
+  filename=header.split('"')[1]
+  is_proto_header = "pb.h" in filename
+  is_proto = ".proto" in filename
+  basename=filename.split('.')[0];
+  target_name = ":".join(basename.rsplit('/', 1))
+  if is_proto_header:
+    return '//' + target_name + '_cc_proto'
+  elif is_proto:
+    return '//' + target_name + '_proto'
+  else:
+    return '//' + target_name
+
+
+def extract_targets(headers):
+  result = []
+  headers = headers.split("\n")
+  for l in headers:
+    t = extract_target(l)
+    if t is None: continue
+    result.append(t)
+  return '",\n"'.join(result)
+
+endglobal
+
+snippet dinc "Add dependency include"
+`!p snip.rv = '"' + extract_targets(snip.v.text.strip()) + '",'`
+endsnippet
+
+snippet bcc "cc_library in BUILD file" b
+cc_library(
+  name = "$1",
+  hdrs = ["$1.h"],
+  srcs = ["$1.cc"],
+  deps = [],
+)
+endsnippet
+
+snippet pbin "py_binary" b
+py_binary(
+    name = "$1",
+    srcs = ["$1.py"],
+    deps = [
+        ":$1",
+    ],
+)
+endsnippet
+
+snippet  bpybin "py_binary" b
+py_binary(
+    name = "$1",
+    srcs = ["$1.py"],
+    data = [],  # cc_binary which we invoke at run time
+    deps = [] #  py_library
+)
+endsnippet
+
+snippet bbin "cc_binary in BUILD file" b
+cc_binary(
+  name = "$1",
+  srcs = ["$1.cc"],
+  deps = [
+	":$1",
+	],
+)
+endsnippet
+
+snippet bbm "add benchmakr binary"
+cc_binary(
+  name = "$1_bm",
+  srcs = ["$1_bm.cc"],
+  deps = [
+	":$1",
+  "@com_github_google_benchmark//:benchmark",
+	],
+)
+endsnippet
+
+snippet bproto "proto build config" b
+proto_library(
+  name = "$1_proto",
+  srcs = ["$1.proto"],
+)
+cc_proto_library(
+  name = "$1_cc_proto",
+  deps = [":$1_proto"],
+)
+endsnippet
+
+snippet btest "proto test config" b
+cc_test(
+  name = "$1_test",
+  srcs = ["$1_test.cc"],
+  deps = [
+     ":$1",
+    "@com_google_googletest//:gtest",
+    "@com_google_googletest//:gtest_main",
+  ]
+)
+endsnippet
+
+snippet initcc "initialize a cc file" b
+namespace qcraft {
+namespace {
+}
+
+}
+endsnippet
+
+snippet dvec "add vec dependency"
+"//onboard/math:vec",
+endsnippet
+
+snippet dspan "add span dependency" b
+    "@com_google_absl//absl/types:span",
+endsnippet
+
+snippet dtim "add absl time" b
+    "@com_google_absl//absl/time",
+endsnippet
+
+
+snippet dbox "add box2d dependency"
+"//onboard/math/geometry:box2d",
+endsnippet
+
+snippet dpolygon "add box2d dependency"
+"//onboard/math/geometry:polygon2d",
+endsnippet
+
+
+snippet dtestutil "add math_testutil dependency"
+     "//onboard/math:test_util",
+endsnippet
+
+snippet dlog "add log dependency"
+     "//onboard/lite:check",
+endsnippet
+
+snippet dflatmap "add absl::flat_hash_map"
+   "@com_google_absl//absl/container:flat_hash_map",
+endsnippet
+
+snippet dflatset "add absl::flat_hash_set"
+   "@com_google_absl//absl/container:flat_hash_set",
+endsnippet
+
+snippet dstrfmt "add absl string dependency"
+    "@com_google_absl//absl/strings:str_format",
+endsnippet
+
+snippet dstrcat "add absl string dependency"
+    "@com_google_absl//absl/strings",
+endsnippet
+
+snippet dstrong "add strong_vector dependency"
+    "//onboard/base:strong_vector",
+endsnippet
+
+snippet dstrong "add strong_vector dependency"
+    "//onboard/math:vec",
+endsnippet
+
+snippet dproto "dproto" b
+    "@com_google_protobuf//:protobuf",
+
+endsnippet
+
+snippet dbox2d "" b
+   "//onboard/math/geometry:box2d_proto",
+endsnippet
+
+snippet dopt "optional " b
+ "@com_google_absl//absl/types:optional"
+endsnippet
+
+snippet dplannerproto "add planner proto deps" b
+        "//onboard/proto:planner_proto",
+endsnippet
+
+
+
+snippet dbm "add benchmark dependency" b
+        "@com_github_google_benchmark//:benchmark",
+endsnippet
+
+snippet dstatus "add status dependency" b
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "//onboard/utils:status_macros",
+endsnippet 
+
+snippet dtime "dtime" b
+        "@com_google_absl//absl/time",
+endsnippet
+
+snippet dcleanup "dcleanup" b
+        "@com_google_absl//absl/cleanup",
+endsnippet
+
+

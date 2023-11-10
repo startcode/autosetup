@@ -1,0 +1,20 @@
+# global !p
+#
+# def complete_tested(t, opts):
+#   if t: opts = [m[len(t):] for m in opts if m.startswith(t)];
+#   if len(opts) is 1: return opts[0];
+#   return "[" + "|".join(opts) + "]";
+#
+# endglobal
+
+snippet fea "toc" b
+ISSUE=PNC-${1:123}
+TESTED=${2:skipped|unittest|scenario|eval|manual}
+RELNOTE=Y
+endsnippet
+
+snippet ref "code refactor" b
+ISSUE=N
+TESTED=skipped: code refactor
+RELNOTE=N
+endsnippet
